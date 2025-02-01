@@ -1,17 +1,27 @@
 import React, { useState } from 'react';
-import { postData } from '../services/api';
 
 function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [submissionMessage, setSubmissionMessage] = useState('');
+  const [status, setStatus] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const response = await postData('contact', formData); // Posts to /api/contact
-      setSubmissionMessage(response.message);
+      const response = await fetch('http://localhost:5000/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        setStatus('Message sent successfully!');
+        setFormData({ name: '', email: '', message: '' }); // Clear the form
+      } else {
+        setStatus('Failed to send message.');
+      }
     } catch (error) {
-      setSubmissionMessage('Failed to submit form. Please try again.');
+      setStatus('An error occurred. Please try again.');
     }
   };
 
@@ -39,9 +49,9 @@ function Contact() {
           onChange={(e) => setFormData({ ...formData, message: e.target.value })}
           required
         />
-        <button type="submit">Submit</button>
+        <button type="submit">Send</button>
       </form>
-      {submissionMessage && <p>{submissionMessage}</p>}
+      {status && <p>{status}</p>}
     </div>
   );
 }

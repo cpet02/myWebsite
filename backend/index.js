@@ -1,20 +1,19 @@
 const express = require('express');
 const mongoose = require('mongoose')
-require('dotenv').config()
 const cors = require('cors');
+require('dotenv').config()
 
 const app = express();
 const PORT = process.env.PORT || 5000; // Use environment variable for port
 
-// Connect to MongoDB
+// Middleware
+app.use(cors()); // Enable CORS
+app.use(express.json()); // Parse JSON request bodies
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
-
-// Middleware
-app.use(cors()); // Enable CORS
-app.use(express.json()); // Parse JSON request bodies
 
 // Import routes
 const blogRoutes = require('./routes/blogRoutes');

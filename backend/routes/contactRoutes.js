@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const contactController = require('../controllers/contactController');
 
-// Define routes
-router.get('/', contactController.getContactData);
-router.post('/', contactController.submitContactForm);
+// POST /api/contact - Save a new contact message
+router.post('/', contactController.saveMessage);
 
 module.exports = router;

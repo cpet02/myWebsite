@@ -1,9 +1,9 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const blogController = require('../controllers/blogController');
+const blogController = require("../controllers/blogController");
 
-// Define routes
-router.get('/', blogController.getBlogData);
-router.post('/', blogController.createBlogPost);
+// Ensure "getPosts" is exported in blogController.js
+router.get("/blog", blogController.getPosts); // <-- Fix this line
+router.post("/blog", blogController.createPost);
 
 module.exports = router;
