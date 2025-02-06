@@ -8,13 +8,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 // Fix: Configure CORS properly
-app.use(
-  cors({
-    origin: 'http://localhost:3000', // Allow your React frontend
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-  })
-);
+app.use(cors()); // Remove the options object (for testing only)
 app.use(express.json());
 
 // Connect to MongoDB (added error handling for after initial connection)

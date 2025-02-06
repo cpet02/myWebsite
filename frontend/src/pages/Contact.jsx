@@ -4,14 +4,35 @@ function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState('');
 
+  // Function to determine if the current host is a private IP
+  const isPrivateIP = (hostname) => {
+    // Check for 192.168.x.x
+    if (/^192\.168\./.test(hostname)) return true;
+    // Check for 10.x.x.x
+    if (/^10\./.test(hostname)) return true;
+    // Check for 172.16.x.x to 172.31.x.x
+    if (/^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname)) return true;
+    return false;
+  };
+
+  // Determine the correct API URL based on the environment
+  const hostname = window.location.hostname;
+  const isLocalNetwork = isPrivateIP(hostname);
+  const isCampusNetwork = hostname.includes('172.17.69.71');
+  const apiUrl = isLocalNetwork
+    ? `http://${hostname}:5000/api/contact` // Use the current private IP
+    : isCampusNetwork
+    ? 'http://172.17.69.71:5000/api/contact'
+    : 'http://localhost:5000/api/contact'; // Fallback for local development
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/contact', {
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
@@ -22,7 +43,7 @@ function Contact() {
       }
     } catch (error) {
       setStatus('An error occurred. Please try again.');
-      console.log(error)
+      console.log(error);
     }
   };
 
