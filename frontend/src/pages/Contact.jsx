@@ -22,6 +22,7 @@ function Contact() {
       }
     } catch (error) {
       setStatus('An error occurred. Please try again.');
+      console.log(error)
     }
   };
 

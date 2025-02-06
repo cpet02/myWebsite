@@ -1,19 +1,31 @@
 const express = require('express');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config()
+require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000; // Use environment variable for port
+const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors()); // Enable CORS
-app.use(express.json()); // Parse JSON request bodies
+// Fix: Configure CORS properly
+app.use(
+  cors({
+    origin: 'http://localhost:3000', // Allow your React frontend
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+  })
+);
+app.use(express.json());
 
-// Connect to MongoDB
+// Connect to MongoDB (added error handling for after initial connection)
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
+
+// Add MongoDB connection event listeners
+const db = mongoose.connection;
+db.on('error', (err) => console.error('MongoDB connection error:', err));
+db.once('open', () => console.log('MongoDB connection established'));
 
 // Import routes
 const blogRoutes = require('./routes/blogRoutes');
@@ -27,14 +39,14 @@ app.use('/api/blog', blogRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/about', aboutRoutes);
 app.use('/api/contact', contactRoutes);
-app.use('/api', apiRoutes); // General API routes
+app.use('/api', apiRoutes);
 
 // Root route
 app.get('/', (req, res) => {
   res.send('Backend is running!');
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+// Start the server (fixed port usage)
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
