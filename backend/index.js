@@ -7,12 +7,14 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-// Fix: Configure CORS properly
-app.use(cors()); // Remove the options object (for testing only)
+app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB (added error handling for after initial connection)
-mongoose.connect(process.env.MONGODB_URI)
+// Debug: Log MongoDB URI
+console.log('MongoDB URI:', process.env.MONGO_URI);
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
 
@@ -40,7 +42,7 @@ app.get('/', (req, res) => {
   res.send('Backend is running!');
 });
 
-// Start the server (fixed port usage)
+// Start the server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
